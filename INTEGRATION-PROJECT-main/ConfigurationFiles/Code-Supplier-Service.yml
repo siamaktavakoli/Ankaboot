@@ -1,0 +1,38 @@
+css:
+  cds:
+    src: https://github.com/kuylim/sa-cds/archive/refs/heads/main.zip
+    projectName: sa-cds-main #reponame-branchname
+  ss:
+    src: https://github.com/aetana/SharedSS/archive/refs/heads/main.zip
+    projectName: SharedSS-main
+  rs:
+    src: https://github.com/danielBogale/rs-service/archive/refs/heads/main.zip
+    projectName: rs-service-main
+  dis:
+    src: https://github.com/taingy-srun/data-input-service/archive/refs/heads/main.zip
+    projectName: data-input-service-main
+    
+#cssTempDir: ${HOME}/csstempdir
+cssTempDir: csstempdir
+zipDir: ${cssTempDir}/zips
+codeDir: ${cssTempDir}/codes
+zipOutDir: ${cssTempDir}/zipOut
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web: ERROR
+  #  file:
+  #    name: ${LOG_PATH:-./logs}/app.log
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+  encoder:
+    pattern: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+    class: net.logstash.logback.encoder.LogstashEncoder
+    customFields:
+      service: my-service
+      environment: dev
+      host: ${HOSTNAME}

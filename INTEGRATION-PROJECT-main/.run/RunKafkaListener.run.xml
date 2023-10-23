@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RunKafkaListener" type="Application" factoryName="Application" folderName="RunAllServices">
+    <option name="MAIN_CLASS_NAME" value="sa.kafkalistener.KafkaListenerApplication" />
+    <module name="KafkaListener" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

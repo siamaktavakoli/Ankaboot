@@ -1,0 +1,84 @@
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 3000
+            read-timeout: 3000
+      circuitbreaker:
+        enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          json:
+            trusted.packages:*
+          deserializer:
+            value:
+              delegate:
+                class: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        json:
+          add.type.headers: false   
+  
+  zipkin:
+    base-url: http://localhost:9411/
+
+sleuth:
+  sampler:
+    probability: 1 #100% (default = 10%)
+
+resilience:
+  factory:
+    configs:
+      time-limiter:
+        timeout: 5
+      circuit-breaker:
+        sliding-window-size: 10
+        failure-rate: 50
+        duration-in-open-state: 30
+
+
+logstash:
+  host: localhost
+  port: 5000
+
+kafka:
+  topics:
+    dis:
+      prefix: DS_
+      one: DS_1
+      two: DS_2
+    adis:
+      cpu-data: TOPIC_CPU-1
+      disk-data: TOPIC_DISK-1
+      network-data: TOPIC_NETWORK-1
+      ram-data: TOPIC_RAM-1
+    cds:
+      one: CDS_1
+      two: CDS_2
+      key: cds_x
+    scoring:
+      lu-bound: BOUND_TOPIC
+      si:
+        one: SI_1_2
+      nsi:
+        one: NSI_1_2
+    reporting:
+      nsi-pattern: NSI.*

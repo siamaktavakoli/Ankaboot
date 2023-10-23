@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - HEAD
+      routes:
+        -
+          id: reportingModule
+          uri: lb://ReportingService
+          predicates: 
+            -
+              Path=/report/**
+
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000

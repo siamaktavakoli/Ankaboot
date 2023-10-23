@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RunInputCreatorService" type="Application" factoryName="Application" folderName="RunAllServices">
+    <option name="ALTERNATIVE_JRE_PATH" value="openjdk-18" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="miu.swa.inputcreatorservice.InputCreatorServiceApplication" />
+    <module name="Input-Creator-Service" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

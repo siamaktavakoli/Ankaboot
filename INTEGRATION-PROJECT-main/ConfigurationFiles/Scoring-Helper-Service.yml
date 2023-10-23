@@ -1,0 +1,19 @@
+server:
+  port: 8383
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: scoring_db
+  kafka:
+    consumer:
+      group-id: gid
+      auto-offset-reset: earliest
+
+logging:
+  level:
+    root: ERROR
+
+org:
+  springframework: ERROR
