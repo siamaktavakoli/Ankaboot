@@ -1,0 +1,43 @@
+version: '2.18.1'
+
+services:
+  registry-service:
+    image: swa/registry-service:latest
+    expose:
+      - "8761"
+    ports:
+      - "8761:8761"
+    networks:
+      - swa-project-network
+
+  config-service:
+    image: swa/config-server:latest
+    expose:
+      - "8888"
+    ports:
+      - "8888:8888"
+    networks:
+      - swa-project-network
+    depends_on:
+      - registry-service
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://registry-service:8761/eureka
+
+  api-gateway:
+    image: swa/api-gateway:latest
+    expose:
+      - "8081"
+    ports:
+      - "8081:8081"
+    networks:
+      - swa-project-network
+    depends_on:
+      - config-service
+      - registry-service
+    environment:
+      SPRING.CONFIG.IMPORT: optional:configserver:http://config-service:8888
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://registry-service:8761/eureka
+
+
+networks:
+  swa-project-network:
