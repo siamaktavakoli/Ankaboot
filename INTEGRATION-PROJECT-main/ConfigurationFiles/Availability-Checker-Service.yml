@@ -1,0 +1,14 @@
+server:
+  port: 8081
+app:
+  kafka:
+    input-destination: NEWAPI
+    success-destination: HealthyAPI
+    failed-destination: UnsureAPI
+
+  api:
+    test:
+      successful-http-statuses: 200,201,202,203,204
+      unauthorized-http-statuses: 401,403
+  key-extraction:
+    scraping-depth-level: 2
