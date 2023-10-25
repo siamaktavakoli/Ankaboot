@@ -1,7 +1,7 @@
 version: '2.18.1'
 
 services:
-  registry-service:
+  Registry-Service:
     image: swa/registry-service:latest
     expose:
       - "8761"
@@ -10,7 +10,7 @@ services:
     networks:
       - swa-project-network
 
-  config-service:
+  Config-Server:
     image: swa/config-server:latest
     expose:
       - "8888"
@@ -18,26 +18,62 @@ services:
       - "8888:8888"
     networks:
       - swa-project-network
+    links:
+      - Registry-Service
     depends_on:
-      - registry-service
+      - Registry-Service
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://config-service:8888" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
     environment:
-      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://registry-service:8761/eureka
+      EUREKA_HOST: Registry-Service
+#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://Registry-Service:8761/eureka
 
-  api-gateway:
+  Api-Gateway:
     image: swa/api-gateway:latest
+    restart: always
     expose:
       - "8081"
     ports:
       - "8081:8081"
     networks:
       - swa-project-network
+    links:
+      - Config-Server
+      - Registry-Service
     depends_on:
-      - config-service
-      - registry-service
+      - Config-Server
+      - Registry-Service
     environment:
-      SPRING.CONFIG.IMPORT: optional:configserver:http://config-service:8888
-      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://registry-service:8761/eureka
+      CONFIG_HOST: Config-Server
+      EUREKA_HOST: Registry-Service
+#      SPRING.CONFIG.IMPORT: optional:configserver:http://Config-Server:8888
+#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://Registry-Service:8761/eureka
+
+  code-supplier-service:
+    image: swa/code-supplier-service:latest
+    restart: always
+    expose:
+      - "8085"
+    ports:
+      - "8085:8085"
+    networks:
+      - swa-project-network
+    links:
+      - Config-Server
+      - Registry-Service
+    depends_on:
+      - Config-Server
+      - Registry-Service
+    environment:
+      CONFIG_HOST: Config-Server
+      EUREKA_HOST: Registry-Service
+#      SPRING.CONFIG.IMPORT: optional:configserver:http://Config-Server:8888
+#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://Registry-Service:8761/eureka
 
 
 networks:
   swa-project-network:
+    driver: bridge
