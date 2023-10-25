@@ -13,40 +13,41 @@ import java.util.Set;
 @RequestMapping("/crawler")
 @RequiredArgsConstructor
 public class WebScraperController {
+    // This controller handles web scraping and link filtering operations.
+
     private final WebCrawlerService webCrawlerService;
+    // Autowired instance of WebCrawlerService to initiate web crawling.
+
     @Autowired
     private Sender sender;
+    // Autowired instance of Sender to send messages to a Kafka topic.
 
     @GetMapping("/crawl")
     public void startCrawling(@RequestParam String searchQuery) {
-        // Here, you can use the list of URLs from your original code
+        // Initiates the web crawling process and link filtering based on a search query.
+        // You can use the list of URLs from your original code or modify it as needed.
         List<String> urlsToCrawl = new ArrayList<>();
         urlsToCrawl.add("https://www.abcnews.com");
         urlsToCrawl.add("https://www.npr.org");
         urlsToCrawl.add("https://www.nytimes.com");
 
         Set<String> crawledLinks = webCrawlerService.startCrawling(urlsToCrawl);
-        for (String cr: crawledLinks) {
+        for (String cr : crawledLinks) {
             System.out.println(cr);
         }
 
-
         sender.send("Message");
 
-
         crawledLinks = filterLinks(crawledLinks, searchQuery);
-        for (String urls:crawledLinks
-               ) {
+        for (String urls : crawledLinks) {
             System.out.println(urls);
-
         }
 
-         crawledLinks.forEach(System.out::println);
+        crawledLinks.forEach(System.out::println);
     }
 
-
     private Set<String> filterLinks(Set<String> links, String searchQuery) {
-
+        // Filters links based on the provided search query.
         Set<String> filteredLinks = new HashSet<>();
         for (String link : links) {
             if (link.contains(searchQuery)) {
@@ -56,4 +57,3 @@ public class WebScraperController {
         return filteredLinks;
     }
 }
-
