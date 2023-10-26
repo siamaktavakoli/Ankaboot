@@ -96,6 +96,37 @@ services:
     depends_on:
       - kafka
 
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-data:/data/db
+
+  reporting-service:
+    image: swa/reporting-service:latest
+    restart: always
+    expose:
+      - "8385"
+    ports:
+      - "8385:8385"
+    networks:
+      - swa-project-network
+    links:
+      - Config-Server
+      - Registry-Service
+    depends_on:
+      - Config-Server
+      - Registry-Service
+      - mongodb
+      - kafka
+    environment:
+      CONFIG_HOST: Config-Server
+      EUREKA_HOST: Registry-Service
+      MONGO_HOST: mongodb
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: kafka:29092
+
 networks:
   swa-project-network:
     driver: bridge
