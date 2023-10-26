@@ -123,6 +123,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>wdfs-service</finalName>
 	</build>
 
 </project>

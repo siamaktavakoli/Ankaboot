@@ -1,6 +1,28 @@
 version: '2.18.1'
 
 services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   Registry-Service:
     image: swa/registry-service:latest
     expose:
@@ -22,14 +44,8 @@ services:
       - Registry-Service
     depends_on:
       - Registry-Service
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://config-service:8888" ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 5
     environment:
       EUREKA_HOST: Registry-Service
-#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://Registry-Service:8761/eureka
 
   Api-Gateway:
     image: swa/api-gateway:latest
@@ -49,8 +65,6 @@ services:
     environment:
       CONFIG_HOST: Config-Server
       EUREKA_HOST: Registry-Service
-#      SPRING.CONFIG.IMPORT: optional:configserver:http://Config-Server:8888
-#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://Registry-Service:8761/eureka
 
   code-supplier-service:
     image: swa/code-supplier-service:latest
@@ -70,9 +84,17 @@ services:
     environment:
       CONFIG_HOST: Config-Server
       EUREKA_HOST: Registry-Service
-#      SPRING.CONFIG.IMPORT: optional:configserver:http://Config-Server:8888
-#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://Registry-Service:8761/eureka
 
+  WDFS_Service:
+    image: swa/wdfs-service:latest
+    expose:
+      - "8901"
+    ports:
+      - "8901:8901"
+    links:
+      - kafka
+    depends_on:
+      - kafka
 
 networks:
   swa-project-network:
