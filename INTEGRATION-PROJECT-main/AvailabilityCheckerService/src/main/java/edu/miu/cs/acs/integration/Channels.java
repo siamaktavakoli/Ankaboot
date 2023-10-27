@@ -11,7 +11,7 @@ import org.springframework.messaging.MessageChannel;
 @MessageEndpoint
 public class Channels {
 
-    public static final String INPUT_CHANNEL = "NEWAPI";
+    public static final String INPUT_CHANNEL = "inputChannel";
     public static final String SUCCESSFUL_API_CHANNEL = "successfulApiChannel";
     public static final String UNAUTHORIZED_API_CHANNEL = "unauthorizedApiChannel";
     public static final String FAILED_API_CHANNEL = "failedApiChannel";
