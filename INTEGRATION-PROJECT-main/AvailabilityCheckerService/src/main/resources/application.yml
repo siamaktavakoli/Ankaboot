@@ -1,0 +1,64 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: AvailabilityCheckService
+  config:
+    import: configserver:http://localhost:8888
+
+  cloud:
+    config:
+      discovery:
+        enabled: true
+      name: Availability-Check-Service
+    function:
+      definition: inputDataConsumer
+    stream:
+      bindings:
+        inputDataConsumer-in-0:
+          group: input-data-consumer
+          destination: ${app.kafka.input-destination}
+      kafka:
+        binder:
+          brokers: localhost:9092
+          consumer-properties:
+            client.id: ACS
+            #earliest: automatically reset the offset to the earliest offset
+            #latest: automatically reset the offset to the latest offset
+            auto.offset.reset: earliest
+            group.instance.id: instance
+            auto.commit.interval.ms: 500
+          required-acks: 1
+        bindings:
+          inputDataConsumer-in-0:
+            consumer:
+              ack-mode: manual
+              enable-dlq: true
+              dlq-name: DLQ.input-data
+  kafka:
+    admin:
+      client-id: ACS
+app:
+  kafka:
+    input-destination: NEWAPI
+    failed-destination: UnsureAPI
+    success-destination: HealthyAPI
+  api:
+    test:
+      successful-http-statuses: 200,201,202,203,204
+      unauthorized-http-statuses: 401,403
+  key-extraction:
+    scraping-depth-level: 2
+
+logging:
+  level:
+    "org.apache.kafka.clients.admin.AdminClientConfig": WARN
+    "org.apache.kafka.clients.consumer.ConsumerConfig": WARN
+    "org.apache.kafka.clients.producer.ProducerConfig": WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "*"
